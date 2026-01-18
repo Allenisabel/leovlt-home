@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo 的个人主页</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111111;
+            --card-bg-hover: #111111;
+            --card-text-hover: #ffffff;
+            --border-color: #eaeaea;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.6;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+
+        /* 自我介绍区域 */
+        .profile-section {
+            margin-bottom: 3rem;
+            text-align: left;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: -0.05rem;
+        }
+
+        .profile-bio {
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 300;
+        }
+
+        /* 小工具区域 */
+        .tools-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .tool-card {
+            display: block;
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: all var(--transition-speed) ease;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.5);
+            animation: slideUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .tool-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .tool-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .tool-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .tool-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-name {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .tool-arrow {
+            transform: translateX(0);
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .tool-card:hover {
+            background-color: var(--card-bg-hover);
+            color: var(--card-text-hover);
+            border-color: var(--card-bg-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-card:hover .tool-arrow {
+            transform: translateX(6px);
+        }
+
+        .tool-card:active {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0a0a0a;
+                --text-color: #fdfdfd;
+                --card-bg-hover: #ffffff;
+                --card-text-hover: #000000;
+                --border-color: #333;
+            }
+
+            .profile-bio {
+                color: #aaa;
+            }
+
+            .tool-card:hover {
+                box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <main class="container">
+            <section id="profile-section" class="profile-section"></section>
+            <section id="tools-section" class="tools-grid"></section>
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // 配置区域 (在这下面修改内容)
+        // ==========================================
+        const CONFIG = {
+            // 自我介绍模块
+            profile: {
+                name: "Leo",
+                // 支持 HTML 标签，例如 <br> 换行
+                bio: "这里是 Leo，尝试做一些有意思的小工具。<br>点击下方可以跳转到相应的工具。"
+            },
+
+            // 小工具列表
+            // 格式：{ name: "工具名称", url: "跳转链接" }
+            tools: [
+                {
+                    name: "财务自由模拟器",
+                    url: "https://fi.leovlt.com"
+                },
+                {
+                    name: "Z-Library 最新官方入口",
+                    url: "https://zlib.leovlt.com"
+                }
+            ]
+        };
+        // ==========================================
+        // 配置结束 (以下是程序逻辑，无需修改)
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProfile();
+            renderTools();
+        });
+
+        function renderProfile() {
+            const profileSection = document.getElementById('profile-section');
+            const { profile } = CONFIG;
+
+            if (!profile) return;
+
+            const html = `
+                <h1 class="profile-name">${profile.name}</h1>
+                <p class="profile-bio">${profile.bio}</p>
+            `;
+            profileSection.innerHTML = html;
+        }
+
+        function renderTools() {
+            const toolsSection = document.getElementById('tools-section');
+            const { tools } = CONFIG;
+
+            if (!tools || tools.length === 0) return;
+
+            tools.forEach(tool => {
+                const card = document.createElement('a');
+                card.href = tool.url;
+                card.className = 'tool-card';
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
+
+                const html = `
+                    <div class="tool-content">
+                        <span class="tool-name">${tool.name}</span>
+                        <span class="tool-arrow">→</span>
+                    </div>
+                `;
+                card.innerHTML = html;
+                toolsSection.appendChild(card);
+            });
+        }
+    </script>
+</body>
+
+</html>
